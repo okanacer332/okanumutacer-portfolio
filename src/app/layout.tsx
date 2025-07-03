@@ -1,110 +1,59 @@
 // src/app/layout.tsx
 
-'use client'; // State kullanacağımız için bu satır zorunlu!
+'use client';
 
 import * as React from 'react';
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import ThemeRegistry from '@/components/ThemeRegistry';
-import SidebarContent from '@/components/SidebarContent'; // Yeni bileşenimizi import ediyoruz
-import { Box, Drawer, AppBar, Toolbar, IconButton, Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import SidebarContent from '@/components/SidebarContent';
+import { Box, Drawer } from '@mui/material';
+import DynamicScrollButton from '@/components/DynamicScrollButton'; // Yeni bileşeni import ediyoruz
 
 const inter = Inter({ subsets: ['latin'] });
 
-// Metadata'yı layout'un dışında tanımlıyoruz, çünkü layout artık bir client component
-// export const metadata: Metadata = { ... }; Bu şekilde kullanamayız.
-// SEO için her sayfada ayrı Head yönetimi yapacağız, şimdilik bu konuyu park edelim.
-
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
   return (
     <html lang="tr">
       <body className={inter.className}>
         <ThemeRegistry>
           <Box sx={{ display: 'flex' }}>
-            {/* MOBİL İÇİN ÜST BAR */}
-            <AppBar
-              position="fixed"
+            <Drawer
+              variant="permanent"
               sx={{
-                width: { md: `calc(100% - ${drawerWidth}px)` },
-                ml: { md: `${drawerWidth}px` },
-                display: { xs: 'block', md: 'none' }, // Sadece mobilde görünür
+                width: drawerWidth,
+                flexShrink: 0,
+                '& .MuiDrawer-paper': {
+                  width: drawerWidth,
+                  boxSizing: 'border-box',
+                  borderRight: '1px solid',
+                  borderColor: 'rgba(255, 255, 255, 0.12)',
+                  backgroundColor: 'background.default',
+                },
               }}
             >
-              <Toolbar>
-                <IconButton
-                  color="inherit"
-                  aria-label="open drawer"
-                  edge="start"
-                  onClick={handleDrawerToggle}
-                  sx={{ mr: 2, display: { md: 'none' } }}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Typography variant="h6" noWrap component="div">
-                  Okan Umut Acer
-                </Typography>
-              </Toolbar>
-            </AppBar>
+              <SidebarContent />
+            </Drawer>
 
-            <Box
-              component="nav"
-              sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
-              aria-label="mailbox folders"
-            >
-              {/* MOBİLDE AÇILIR GEÇİCİ DRAWER */}
-              <Drawer
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                  keepMounted: true, // Performans için
-                }}
-                sx={{
-                  display: { xs: 'block', md: 'none' },
-                  '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                }}
-              >
-                <SidebarContent />
-              </Drawer>
-
-              {/* MASAÜSTÜNDE SABİT DRAWER */}
-              <Drawer
-                variant="permanent"
-                sx={{
-                  display: { xs: 'none', md: 'block' },
-                  '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                }}
-                open
-              >
-                <SidebarContent />
-              </Drawer>
-            </Box>
-
-            {/* ANA İÇERİK ALANI */}
             <Box
               component="main"
               sx={{
                 flexGrow: 1,
-                p: 3,
-                width: { md: `calc(100% - ${drawerWidth}px)` },
-                mt: { xs: '64px', md: 0 } // Mobildeki üst barın yüksekliği kadar boşluk
+                p: { xs: 2, sm: 3, md: 4 },
+                backgroundColor: 'background.paper',
+                minHeight: '100vh',
               }}
             >
               {children}
             </Box>
+
+            {/* Dinamik kaydırma butonu tüm sayfaların üzerinde burada yer alacak */}
+            <DynamicScrollButton />
           </Box>
         </ThemeRegistry>
       </body>

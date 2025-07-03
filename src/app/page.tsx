@@ -1,11 +1,11 @@
-// src/app/page.tsx - YENİ "CustomGrid" KULLANIMI İLE GÜNCELLENMİŞ VERSİYON
+// src/app/page.tsx
 
-import { Box, Typography, Container, Divider, Paper, Avatar, Grid, Chip, Stack } from '@mui/material';
-import CustomGrid from '@/components/CustomGrid'; // Kendi özel Grid bileşenimizi import ediyoruz
-import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot, TimelineOppositeContent } from '@mui/lab';
+'use client';
+
+import { Box, Typography, Container, Divider, Paper, Grid, Chip, Stack } from '@mui/material';
+import CustomGrid from '@/components/CustomGrid';
+import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import React from 'react';
-
-// İkonları import edelim
 import CodeIcon from '@mui/icons-material/Code';
 import BuildIcon from '@mui/icons-material/Build';
 import StorageIcon from '@mui/icons-material/Storage';
@@ -13,19 +13,17 @@ import CloudQueueIcon from '@mui/icons-material/CloudQueue';
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import ConstructionIcon from '@mui/icons-material/Construction';
 
-// Bölüm başlıkları için standart bir bileşen
-const SectionTitle = ({ title }: { title: string }) => (
-  <>
-    <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
-      {title}
+const SectionTitle = ({ title, number }: { title: string; number: string }) => (
+  <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+    <Typography variant="h3" component="h2" sx={{ whiteSpace: 'nowrap' }}>
+       <Typography component="span" variant="h3" color="primary.main">{number}.</Typography> {title}
     </Typography>
-    <Divider sx={{ mb: 4, width: '80px', height: '3px' }} />
-  </>
+    <Divider sx={{ flexGrow: 1, ml: 3, borderColor: 'rgba(255, 255, 255, 0.12)' }} />
+  </Box>
 );
 
-// Deneyimler için veri dizisi
 const experiences = [
-    {
+  {
     date: 'Nisan 2021 - Nisan 2025',
     title: 'Yazılım Uzmanı',
     company: 'Mirsis Bilgi Teknolojileri via AKBANK',
@@ -45,14 +43,12 @@ const experiences = [
   },
 ];
 
-// Yetenekler için tip tanımlaması
 interface SkillCategory {
   category: string;
   icon: React.ReactElement;
   items: string[];
 }
 
-// Yetenekler için veri dizisi
 const skillsData: SkillCategory[] = [
   {
     category: 'Programlama Dilleri',
@@ -87,44 +83,46 @@ const skillsData: SkillCategory[] = [
 ];
 
 export default function HomePage() {
+
   return (
     <Container maxWidth="lg">
-      {/* HAKKIMDA BÖLÜMÜ */}
-      <Box id="hakkimda" component="section" sx={{ py: 8, textAlign: 'center' }}>
-        <Avatar
-          alt="Okan Umut Acer"
-          src="/profil-fotografi.jpg"
-          sx={{ width: 150, height: 150, margin: '0 auto 16px', border: '3px solid', borderColor: 'primary.main' }}
-        />
-        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-          Okan Umut Acer
+      <Box 
+        id="hakkimda" 
+        component="section" 
+        sx={{ 
+          minHeight: '90vh', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'center',
+          position: 'relative'
+        }}
+      >
+        <Typography variant="h1" component="h1" sx={{ fontWeight: 'bold' }}>
+          Fikirleri Koda, Kodları <br/>
+          <Typography component="span" variant="h1" color="primary.main">Değere Dönüştürürüm.</Typography>
         </Typography>
-        <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
-          Bilgisayar Mühendisi | Java & React Geliştiricisi
+        <Typography variant="h5" color="text.secondary" sx={{ mt: 2, mb: 4 }}>
+          Java (Spring) ve JavaScript (React, Next.js) ekosistemlerinde,
+          <br/>uçtan uca modern ve ölçeklenebilir çözümler geliştiriyorum.
         </Typography>
-        <Typography variant="body1" maxWidth="md" sx={{ margin: '0 auto' }}>
-          Ben bir fikir-ürün geliştiricisiyim ve temel felsefem, sektörden bağımsız olarak teknolojiyle somut değer yaratmaktır. Kariyerim boyunca bankacılığın düzenlenmiş dünyasından endüstriyel otomasyonun (SCADA) özel ihtiyaçlarına kadar farklı alanlarda edindiğim tecrübeyle, Java (Spring Boot) ile kurumsal düzeyde güvenilir ve ölçeklenebilir backend sistemleri kurarken, React (Next.js) ile bu sistemleri modern ve kullanıcı dostu arayüzlerle buluşturuyorum. Nihai amacım, karmaşık iş süreçlerini ve teknik gereksinimleri herkes için anlaşılır, yönetilebilir ve verimli çözümlere dönüştürmektir.
+        <Typography variant="body1" maxWidth="lg">
+          Kariyerim boyunca bankacılığın düzenlenmiş dünyasından endüstriyel otomasyonun (SCADA) özel ihtiyaçlarına kadar farklı alanlarda edindiğim tecrübeyle, Java (Spring Boot) ile kurumsal düzeyde güvenilir ve ölçeklenebilir backend sistemleri kurarken, React (Next.js) ile bu sistemleri modern ve kullanıcı dostu arayüzlerle buluşturuyorum. Nihai amacım, karmaşık iş süreçlerini ve teknik gereksinimleri herkes için anlaşılır, yönetilebilir ve verimli çözümlere dönüştürmektir.
         </Typography>
       </Box>
 
-      {/* DENEYİMLERİM BÖLÜMÜ */}
-      <Box id="deneyim" component="section" sx={{ py: 8 }}>
-        <SectionTitle title="Deneyimlerim" />
-        <Timeline position="alternate">
+      <Box id="deneyim" component="section" sx={{ py: 10 }}>
+        <SectionTitle title="Deneyimlerim" number="01" />
+        <Timeline position="left" sx={{ [`& .MuiTimelineItem-root::before`]: { flex: 0, padding: 0 } }}>
           {experiences.map((exp, index) => (
             <TimelineItem key={index}>
-              <TimelineOppositeContent sx={{ m: 'auto 0' }} align="right" variant="body2" color="text.secondary">
-                {exp.date}
-              </TimelineOppositeContent>
               <TimelineSeparator>
-                <TimelineConnector />
                 <TimelineDot color="primary" variant="outlined" />
-                <TimelineConnector />
+                {index < experiences.length - 1 && <TimelineConnector />}
               </TimelineSeparator>
               <TimelineContent sx={{ py: '12px', px: 2 }}>
-                <Paper elevation={3} sx={{ p: 2 }}>
-                  <Typography variant="h6" component="h3">{exp.title}</Typography>
-                  <Typography variant="subtitle1" sx={{ mb: 1, fontStyle: 'italic' }}>{exp.company}</Typography>
+                <Paper elevation={3} sx={{ p: 3, borderLeft: '4px solid', borderColor: 'primary.main' }}>
+                  <Typography variant="h6" component="h3">{exp.title} - <Typography component="span" variant="h6" color="primary.main">{exp.company}</Typography></Typography>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontStyle: 'italic', color: 'text.secondary' }}>{exp.date}</Typography>
                   <Typography variant="body2">{exp.description}</Typography>
                 </Paper>
               </TimelineContent>
@@ -133,16 +131,14 @@ export default function HomePage() {
         </Timeline>
       </Box>
 
-      {/* YETENEKLERİM BÖLÜMÜ */}
-      <Box id="yetenekler" component="section" sx={{ py: 8 }}>
-         <SectionTitle title="Yeteneklerim" />
+      <Box id="yetenekler" component="section" sx={{ py: 10 }}>
+         <SectionTitle title="Yeteneklerim" number="02" />
          <Grid container spacing={3}>
             {skillsData.map((skillCategory) => (
-              // İsteğiniz doğrultusunda CustomGrid bileşenini kullanıyoruz
               <CustomGrid size={{ xs: 12, sm: 6, md: 4 }} key={skillCategory.category}>
-                <Paper elevation={2} sx={{ p: 2, height: '100%' }}>
-                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-                    {skillCategory.icon}
+                <Paper elevation={2} sx={{ p: 2.5, height: '100%' }}>
+                  <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                    <Typography color="primary">{skillCategory.icon}</Typography>
                     <Typography variant="h6" component="h3">{skillCategory.category}</Typography>
                   </Stack>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
