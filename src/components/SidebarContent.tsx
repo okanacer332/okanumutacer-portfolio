@@ -1,5 +1,3 @@
-// src/components/SidebarContent.tsx
-
 'use client';
 
 import React from 'react';
@@ -17,7 +15,12 @@ const menuItems = [
   { label: 'İletişim', path: '/iletisim', icon: <MailOutline /> },
 ];
 
-export default function SidebarContent() {
+// Bileşenin prop'larına onLinkClick fonksiyonunu ekliyoruz.
+interface SidebarContentProps {
+  onLinkClick?: () => void;
+}
+
+export default function SidebarContent({ onLinkClick }: SidebarContentProps) {
   const pathname = usePathname();
 
   return (
@@ -30,10 +33,7 @@ export default function SidebarContent() {
         backgroundColor: 'background.default',
       }}
     >
-      {/* Bu kutu, içeriği dikeyde ortalamak için esnek büyüyecek */}
       <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        
-        {/* MERKEZDEKİ GRUP: Profil, Menü ve Sosyal İkonlar */}
         <Box sx={{ textAlign: 'center' }}>
           <Avatar
             alt="Okan Umut Acer"
@@ -54,7 +54,6 @@ export default function SidebarContent() {
             Bilgisayar Mühendisi
           </Typography>
 
-          {/* Navigasyon Menüsü */}
           <Stack component="nav" spacing={1}>
             {menuItems.map((item) => {
               const isActive = pathname === item.path;
@@ -64,6 +63,8 @@ export default function SidebarContent() {
                   component={Link}
                   href={item.path}
                   startIcon={item.icon}
+                  // Her butona tıklandığında onLinkClick fonksiyonunu çağırıyoruz.
+                  onClick={onLinkClick}
                   sx={{
                     justifyContent: 'flex-start',
                     px: 2,
@@ -101,7 +102,6 @@ export default function SidebarContent() {
 
           <Divider sx={{ my: 4, borderColor: 'rgba(255, 255, 255, 0.12)' }} />
 
-          {/* Sosyal Medya İkonları */}
           <Stack direction="row" spacing={1.5} justifyContent="center">
             <IconButton
               href="https://github.com/okanumut"
@@ -123,7 +123,6 @@ export default function SidebarContent() {
         </Box>
       </Box>
 
-      {/* EN ALTTAKİ GRUP: Footer Yazısı */}
       <Box sx={{ textAlign: 'center', pb: 1 }}>
         <Typography variant="caption" color="text.disabled">
           © {new Date().getFullYear()} Made by Okan

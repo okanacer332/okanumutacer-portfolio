@@ -1,5 +1,3 @@
-// src/app/page.tsx
-
 'use client';
 
 import { Box, Typography, Container, Divider, Paper, Grid, Chip, Stack } from '@mui/material';
@@ -23,7 +21,7 @@ const SectionTitle = ({ title, number }: { title: string; number: string }) => (
 );
 
 const experiences = [
-  {
+    {
     date: 'Nisan 2021 - Nisan 2025',
     title: 'Yazılım Uzmanı',
     company: 'Mirsis Bilgi Teknolojileri via AKBANK',
@@ -83,25 +81,45 @@ const skillsData: SkillCategory[] = [
 ];
 
 export default function HomePage() {
-
   return (
     <Container maxWidth="lg">
       <Box 
         id="hakkimda" 
         component="section" 
         sx={{ 
-          minHeight: '90vh', 
+          minHeight: { xs: '80vh', md: '90vh' }, 
           display: 'flex', 
           flexDirection: 'column', 
           justifyContent: 'center',
           position: 'relative'
         }}
       >
-        <Typography variant="h1" component="h1" sx={{ fontWeight: 'bold' }}>
+        <Typography 
+          variant="h1" 
+          component="h1" 
+          sx={{ 
+            fontWeight: 'bold',
+            fontSize: { xs: '2.2rem', sm: '3rem', md: '3.5rem' } 
+          }}
+        >
           Fikirleri Koda, Kodları <br/>
-          <Typography component="span" variant="h1" color="primary.main">Değere Dönüştürürüm.</Typography>
+          <Typography 
+            component="span" 
+            variant="inherit"
+            color="primary.main"
+          >
+            Değere Dönüştürürüm.
+          </Typography>
         </Typography>
-        <Typography variant="h5" color="text.secondary" sx={{ mt: 2, mb: 4 }}>
+        <Typography 
+          variant="h5" 
+          color="text.secondary" 
+          sx={{ 
+            mt: 2, 
+            mb: 4, 
+            fontSize: { xs: '1.1rem', md: '1.25rem' } 
+          }}
+        >
           Java (Spring) ve JavaScript (React, Next.js) ekosistemlerinde,
           <br/>uçtan uca modern ve ölçeklenebilir çözümler geliştiriyorum.
         </Typography>
@@ -110,7 +128,11 @@ export default function HomePage() {
         </Typography>
       </Box>
 
-      <Box id="deneyim" component="section" sx={{ py: 10 }}>
+      <Box 
+        id="deneyim" 
+        component="section" 
+        sx={{ py: { xs: 8, md: 10 } }}
+      >
         <SectionTitle title="Deneyimlerim" number="01" />
         <Timeline position="left" sx={{ [`& .MuiTimelineItem-root::before`]: { flex: 0, padding: 0 } }}>
           {experiences.map((exp, index) => (
@@ -120,7 +142,7 @@ export default function HomePage() {
                 {index < experiences.length - 1 && <TimelineConnector />}
               </TimelineSeparator>
               <TimelineContent sx={{ py: '12px', px: 2 }}>
-                <Paper elevation={3} sx={{ p: 3, borderLeft: '4px solid', borderColor: 'primary.main' }}>
+                <Paper sx={{ p: 3, borderLeft: '4px solid', borderColor: 'primary.main' }}>
                   <Typography variant="h6" component="h3">{exp.title} - <Typography component="span" variant="h6" color="primary.main">{exp.company}</Typography></Typography>
                   <Typography variant="subtitle2" sx={{ mb: 1, fontStyle: 'italic', color: 'text.secondary' }}>{exp.date}</Typography>
                   <Typography variant="body2">{exp.description}</Typography>
@@ -131,17 +153,21 @@ export default function HomePage() {
         </Timeline>
       </Box>
 
-      <Box id="yetenekler" component="section" sx={{ py: 10 }}>
+      <Box 
+        id="yetenekler" 
+        component="section" 
+        sx={{ py: { xs: 8, md: 10 } }}
+      >
          <SectionTitle title="Yeteneklerim" number="02" />
          <Grid container spacing={3}>
             {skillsData.map((skillCategory) => (
               <CustomGrid size={{ xs: 12, sm: 6, md: 4 }} key={skillCategory.category}>
-                <Paper elevation={2} sx={{ p: 2.5, height: '100%' }}>
+                <Paper sx={{ p: 2.5, height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
                     <Typography color="primary">{skillCategory.icon}</Typography>
                     <Typography variant="h6" component="h3">{skillCategory.category}</Typography>
                   </Stack>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', gap: 1, mt: 'auto' }}>
                     {skillCategory.items.map((skill) => (
                       <Chip label={skill} key={skill} variant="outlined" color="primary" />
                     ))}
