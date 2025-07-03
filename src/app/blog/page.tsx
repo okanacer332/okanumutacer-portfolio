@@ -2,11 +2,12 @@
 
 import { Box, Typography, Container, Divider, Card, CardContent, Button, Stack } from '@mui/material';
 import React from 'react';
-import { dummyPosts } from '@/data/posts'; // Daha önce oluşturduğumuz sahte veriler
+import { dummyPosts } from '@/data/posts';
 
 export default function BlogPage() {
   return (
-    <Container maxWidth="md">
+    // Blog sayfasının ana container'ına bir ID veriyoruz
+    <Container id="blog-sayfasi" maxWidth="md">
       <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
         Blog
       </Typography>

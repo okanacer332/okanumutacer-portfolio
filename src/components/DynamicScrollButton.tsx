@@ -1,14 +1,14 @@
-// src/components/DynamicScrollButton.tsx
+// src/components/DynamicScrollButton.tsx - SAYFA SONUNU DOĞRU ALGILAYAN FİNAL VERSİYON
 
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { Fab } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { keyframes } from '@mui/system';
 
-// Animasyon ve bölümlerimizi tanımlıyoruz
 const bounce = keyframes`
   0%, 100% {
     transform: translateY(0);
@@ -18,60 +18,79 @@ const bounce = keyframes`
   }
 `;
 
-// Sitenizdeki ana bölümlerin ID'leri
-const SECTION_IDS = ['hakkimda', 'deneyim', 'yetenekler'];
+// Hangi sayfada hangi bölümlerin olduğunu tanımlayan konfigürasyon objesi
+const pageSectionsConfig: { [key: string]: string[] } = {
+  '/': ['hakkimda', 'deneyim', 'yetenekler'],
+  '/projeler': ['projeler-sayfasi', 'one-cikan-proje', 'diger-calismalar'],
+  '/blog': ['blog-sayfasi'],
+};
 
 export default function DynamicScrollButton() {
+  const pathname = usePathname();
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  // YENİ STATE: Sayfanın sonunda olup olmadığımızı takip eder
+  const [isAtPageBottom, setIsAtPageBottom] = useState(false);
 
-  // Scroll olayını dinleyerek hangi bölümde olduğumuzu tespit eden fonksiyon
+  const activeSections = pageSectionsConfig[pathname] || [];
+
+  if (activeSections.length === 0) {
+    return null;
+  }
+
   const handleScroll = useCallback(() => {
+    // === YENİ VE DAHA DOĞRU MANTIK ===
+    // 1. Sayfanın sonuna ne kadar kaldığını hesapla
+    const scrollBottom = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+    // Eğer sayfanın sonuna 100 pikselden az kalmışsa, "sayfa sonu" olarak kabul et.
+    setIsAtPageBottom(scrollBottom < 100); 
+    
+    // === ESKİ MANTIK KORUNUYOR: Bölümler arası geçiş için ===
     let currentIdx = 0;
-    // Sayfanın yarısını geçen son bölümü aktif bölüm olarak kabul edelim
-    for (let i = SECTION_IDS.length - 1; i >= 0; i--) {
-      const section = document.getElementById(SECTION_IDS[i]);
+    for (let i = activeSections.length - 1; i >= 0; i--) {
+      const section = document.getElementById(activeSections[i]);
       if (section && section.getBoundingClientRect().top <= window.innerHeight / 2) {
         currentIdx = i;
         break;
       }
     }
     setCurrentSectionIndex(currentIdx);
-  }, []);
+  }, [activeSections]);
 
   useEffect(() => {
-    // Scroll dinleyicisini ekle ve ilk durumu kontrol et
-    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [handleScroll]);
 
-  // Belirtilen bölüme yumuşakça kaydıran fonksiyon
-  const scrollToSection = (index: number) => {
-    const sectionId = SECTION_IDS[index];
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  // En üste yumuşakça kaydıran fonksiyon
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const topSectionId = activeSections[0];
+    document.getElementById(topSectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleClick = () => {
-    const isLastSection = currentSectionIndex === SECTION_IDS.length - 1;
-
-    // Eğer son bölümde isek, en üste git
-    if (isLastSection) {
+    // ARTIK isAtPageBottom'u kontrol ediyoruz.
+    if (isAtPageBottom) {
       scrollToTop();
     } else {
-      // Değilsek, bir sonraki bölüme git
-      scrollToSection(currentSectionIndex + 1);
+      const nextSectionId = activeSections[currentSectionIndex + 1] || activeSections[0];
+      const nextElement = document.getElementById(nextSectionId);
+      if(nextElement) {
+        nextElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // Her ihtimale karşı, eğer bir sonraki bölüm bulunamazsa en üste gitsin
+        scrollToTop();
+      }
     }
   };
+  
+  const isOnlyOneSection = activeSections.length <= 1;
 
-  const isLastSection = currentSectionIndex === SECTION_IDS.length - 1;
+  // İkon ve animasyon artık isAtPageBottom'a göre belirleniyor
+  const IconToShow = isAtPageBottom || isOnlyOneSection ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />;
+  const animation = !isAtPageBottom && !isOnlyOneSection ? `${bounce} 1.5s ease-in-out infinite` : 'none';
 
   return (
     <Fab
@@ -82,8 +101,7 @@ export default function DynamicScrollButton() {
         position: 'fixed',
         bottom: { xs: 24, md: 32 },
         right: { xs: 24, md: 32 },
-        // Son bölümde değilsek zıplama animasyonunu göster
-        animation: !isLastSection ? `${bounce} 1.5s ease-in-out infinite` : 'none',
+        animation: animation,
         backgroundColor: '#64ffda',
         color: '#0a1929',
         '&:hover': {
@@ -91,8 +109,7 @@ export default function DynamicScrollButton() {
         },
       }}
     >
-      {/* Son bölümde isek yukarı ok, değilsek aşağı ok göster */}
-      {isLastSection ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+      {IconToShow}
     </Fab>
   );
 }
