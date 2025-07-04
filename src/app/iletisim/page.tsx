@@ -24,8 +24,6 @@ export default function ContactPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Formspree'den aldığın Endpoint URL'si
-  // Lütfen kendi Formspree URL'ini buraya yapıştır.
   const FORMSPREE_FORM_URL = 'https://formspree.io/f/xanjzwjw';
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -47,39 +45,38 @@ export default function ContactPage() {
       return;
     }
 
-    // Form verilerini FormData objesine dönüştürüyoruz
-    // Formspree doğrudan form gönderimini beklediği için bu şekilde yapıyoruz
     const formData = new FormData(event.currentTarget as HTMLFormElement);
 
     try {
-      // Doğrudan Formspree URL'sine POST isteği gönderiyoruz
       const response = await fetch(FORMSPREE_FORM_URL, {
         method: 'POST',
-        body: formData, // FormData objesini doğrudan body olarak gönderiyoruz
+        body: formData,
         headers: {
-          'Accept': 'application/json', // Formspree'den JSON yanıtı beklediğimizi belirtiyoruz
+          'Accept': 'application/json',
         },
       });
 
       const data = await response.json();
 
-      if (response.ok) { // Formspree başarılı yanıtı 200 OK olarak döner
+      if (response.ok) {
         setSuccess('Mesajınız başarıyla gönderildi!');
-        // Formu temizle
         setName('');
         setEmail('');
         setSubject('');
         setMessage('');
       } else {
-        // Formspree hata yanıtı döndüğünde
         if (data.errors) {
-          setError(data.errors.map((err: any) => err.message).join(', '));
+          setError(data.errors.map((errItem: { message: string }) => errItem.message).join(', '));
         } else {
           setError(data.message || 'Mail gönderilirken bir hata oluştu.');
         }
       }
-    } catch (err: any) {
-      setError('Mesaj gönderilirken bir ağ hatası oluştu.');
+    } catch (err: unknown) { // 'any' yerine 'unknown' kullanıldı
+      if (err instanceof Error) { // Hatanın bir Error objesi olup olmadığı kontrol edildi
+        setError(err.message);
+      } else {
+        setError('Mesaj gönderilirken beklenmeyen bir hata oluştu.');
+      }
       console.error('Form gönderim hatası:', err);
     } finally {
       setLoading(false);
@@ -104,7 +101,7 @@ export default function ContactPage() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            name="name" // Formspree için 'name' özelliği eklendi
+            name="name"
           />
           <TextField
             label="E-posta Adresiniz"
@@ -114,7 +111,7 @@ export default function ContactPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            name="email" // Formspree için 'name' özelliği eklendi
+            name="email"
           />
           <TextField
             label="Konu"
@@ -123,7 +120,7 @@ export default function ContactPage() {
             required
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            name="subject" // Formspree için 'name' özelliği eklendi
+            name="subject"
           />
           <TextField
             label="Mesajınız"
@@ -134,7 +131,7 @@ export default function ContactPage() {
             rows={6}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            name="message" // Formspree için 'name' özelliği eklendi
+            name="message"
           />
           <Box sx={{ position: 'relative' }}>
             <Button

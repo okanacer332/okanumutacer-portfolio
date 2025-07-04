@@ -6,18 +6,17 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Box, Typography, Button, Stack, Avatar, IconButton, Divider } from '@mui/material';
 import Link from 'next/link';
-import { HomeOutlined, Code, ArticleOutlined, MailOutline } from '@mui/icons-material';
+import { HomeOutlined, Code, MailOutline } from '@mui/icons-material'; // ArticleOutlined kaldırıldı
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 const menuItems = [
   { label: 'Hakkımda', path: '/', icon: <HomeOutlined /> },
   { label: 'Projelerim', path: '/projeler', icon: <Code /> },
-  // Blog linki buradan kaldırıldı
+  // Blog linki zaten kaldırılmıştı
   { label: 'İletişim', path: '/iletisim', icon: <MailOutline /> },
 ];
 
-// Bileşenin prop'larına onLinkClick fonksiyonunu ekliyoruz.
 interface SidebarContentProps {
   onLinkClick?: () => void;
 }
@@ -65,7 +64,6 @@ export default function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   component={Link}
                   href={item.path}
                   startIcon={item.icon}
-                  // Her butona tıklandığında onLinkClick fonksiyonunu çağırıyoruz.
                   onClick={onLinkClick}
                   sx={{
                     justifyContent: 'flex-start',

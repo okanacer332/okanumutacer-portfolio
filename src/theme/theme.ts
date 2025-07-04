@@ -16,13 +16,22 @@ export const poppins = Poppins({
 });
 
 // Kendi özel ve daha belirgin gölgelerimizi tanımlıyoruz
-const customShadows = [
+// Material-UI'nin beklediği 25 elemanlı string dizisi tipini belirtiyoruz.
+const customShadows: [
+  'none', string, string, string, string, string, string, string, string, string,
+  string, string, string, string, string, string, string, string, string, string,
+  string, string, string, string, string
+] = [
   'none',
   '0px 5px 10px rgba(2, 12, 27, 0.7)',
   '0px 8px 15px rgba(2, 12, 27, 0.7)',
   '0px 10px 20px rgba(2, 12, 27, 0.7)',
-  // ... Geri kalan 21 gölgeyi MUI varsayılanı ile doldurabiliriz veya ihtiyaca göre tanımlayabiliriz
-  ...Array(21).fill('0px 10px 20px rgba(2, 12, 27, 0.7)'),
+  // Geri kalan 21 gölgeyi MUI varsayılanı ile dolduruyoruz veya ihtiyaca göre tanımlıyoruz
+  ...Array(21).fill('0px 10px 20px rgba(2, 12, 27, 0.7)')
+] as [
+  'none', string, string, string, string, string, string, string, string, string,
+  string, string, string, string, string, string, string, string, string, string,
+  string, string, string, string, string
 ];
 
 
@@ -64,7 +73,7 @@ let theme = createTheme({
     }
   },
   // YENİ GÖLGELERİ TEMAYA ENTEGRE EDİYORUZ
-  shadows: customShadows as any,
+  shadows: customShadows,
   components: {
     MuiPaper: {
       styleOverrides: {

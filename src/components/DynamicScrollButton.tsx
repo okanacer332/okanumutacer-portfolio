@@ -1,118 +1,102 @@
-// src/components/DynamicScrollButton.tsx - DÜZELTİLMİŞ VERSİYON
+// src/components/DynamicScrollButton.tsx
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
-import { Fab } from '@mui/material';
+import React, { useEffect, useState, useCallback } from 'react'; // useMemo kaldırıldı
+import { Fab, Box, useScrollTrigger, Zoom } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { keyframes } from '@mui/system';
 
-const bounce = keyframes`
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-`;
+// Bileşenin prop'ları
+interface DynamicScrollButtonProps {
+  threshold?: number;
+}
 
-const pageSectionsConfig: { [key: string]: string[] } = {
-  '/': ['hakkimda', 'deneyim', 'yetenekler'],
-  '/projeler': ['projeler-sayfasi', 'one-cikan-proje', 'diger-calismalar'],
-  '/blog': ['blog-sayfasi'],
-  // Buraya blog detay sayfası gibi yeni sayfaları da ekleyebilirsiniz,
-  // ama şimdilik boş bırakmak bu hatayı çözmek için yeterli.
-};
+export default function DynamicScrollButton({ threshold = 100 }: DynamicScrollButtonProps) {
+  const [currentSection, setCurrentSection] = useState<string | null>(null);
+  // activeSections'ı başlangıçta boş bir dizi olarak tanımlıyoruz
+  const [availableSections, setAvailableSections] = useState<string[]>([]);
 
-export default function DynamicScrollButton() {
-  // 1. TÜM HOOK ÇAĞRILARINI KOŞULSUZ OLARAK EN BAŞA ALIYORUZ
-  const pathname = usePathname();
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [isAtPageBottom, setIsAtPageBottom] = useState(false);
+  // Scroll tetikleyicisi
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: threshold,
+  });
 
-  // Bu satır bir hook olmadığı için burada kalabilir.
-  const activeSections = pageSectionsConfig[pathname] || [];
+  // Bileşen yüklendiğinde (client-side) aktif bölümleri belirle
+  useEffect(() => {
+    // Sadece tarayıcı ortamında çalışmasını sağlıyoruz
+    if (typeof document !== 'undefined') {
+      const sections = ['hakkimda', 'projeler', 'iletisim']; // Sayfa ID'leri
+      // document.getElementById(id) çağrısını bu useEffect içine taşıyoruz
+      setAvailableSections(sections.filter(id => document.getElementById(id)));
+    }
+  }, []); // Sadece bir kez, bileşen yüklendiğinde çalışır
 
+  // Scroll pozisyonunu dinle ve aktif bölümü güncelle
   const handleScroll = useCallback(() => {
-    const scrollBottom = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
-    setIsAtPageBottom(scrollBottom < 100); 
-
-    let currentIdx = 0;
-    // `activeSections` boş olsa bile döngünün hata vermemesi için
-    // `length > 0` kontrolü eklemek iyi bir pratiktir.
-    if (activeSections.length > 0) {
-      for (let i = activeSections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(activeSections[i]);
-        if (section && section.getBoundingClientRect().top <= window.innerHeight / 2) {
-          currentIdx = i;
+    let newCurrentSection: string | null = null;
+    for (const sectionId of availableSections) { // availableSections'ı kullanıyoruz
+      const section = document.getElementById(sectionId);
+      if (section) {
+        const rect = section.getBoundingClientRect();
+        // Eğer bölüm ekranın üst kısmına yakınsa veya içindeyse
+        if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+          newCurrentSection = sectionId;
           break;
         }
       }
     }
-    setCurrentSectionIndex(currentIdx);
-  }, [activeSections]);
+    setCurrentSection(newCurrentSection);
+  }, [availableSections]); // availableSections artık bir bağımlılık olarak güvenli
 
   useEffect(() => {
-    // Listener'ları sadece ilgili bölümler varsa ekleyelim.
-    if (activeSections.length > 0) {
-        handleScroll();
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        
-        return () => {
-          window.removeEventListener('scroll', handleScroll);
-        };
+    // Sadece tarayıcı ortamında event listener ekle
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', handleScroll);
+      // Bileşen yüklendiğinde veya aktif bölümler değiştiğinde ilk kontrolü yap
+      handleScroll();
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
     }
-  }, [handleScroll, activeSections]); // `activeSections`'ı dependency array'e ekliyoruz.
+  }, [handleScroll]);
 
-  // 2. KOŞULLU RETURN İŞLEMİNİ TÜM HOOK'LAR ÇAĞRILDIKTAN SONRA YAPIYORUZ
-  if (activeSections.length === 0) {
-    return null;
-  }
-  
-  // Fonksiyonun geri kalanı aynı...
-  const scrollToTop = () => {
-    const topSectionId = activeSections[0];
-    document.getElementById(topSectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const handleClick = () => {
-    if (isAtPageBottom) {
-      scrollToTop();
-    } else {
-      const nextSectionId = activeSections[currentSectionIndex + 1] || activeSections[0];
-      const nextElement = document.getElementById(nextSectionId);
-      if(nextElement) {
-        nextElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        scrollToTop();
+  // Butona tıklandığında ilgili bölüme veya en üste kaydır
+  const handleClick = useCallback(() => {
+    if (currentSection) {
+      // Eğer aktif bir bölüm varsa, bir sonraki bölüme kaydır
+      const currentIndex = availableSections.indexOf(currentSection);
+      const nextIndex = (currentIndex + 1) % availableSections.length;
+      const nextSectionId = availableSections[nextIndex];
+      const nextSection = document.getElementById(nextSectionId);
+      if (nextSection) {
+        nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+    } else {
+      // Aktif bölüm yoksa veya en alttaysa, en üste kaydır
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
     }
-  };
-  
-  const isOnlyOneSection = activeSections.length <= 1;
-  const IconToShow = isAtPageBottom || isOnlyOneSection ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />;
-  const animation = !isAtPageBottom && !isOnlyOneSection ? `${bounce} 1.5s ease-in-out infinite` : 'none';
+  }, [currentSection, availableSections]); // currentSection ve availableSections bağımlılık olarak eklendi
 
   return (
-    <Fab
-      color="primary"
-      aria-label="scroll section"
-      onClick={handleClick}
-      sx={{
-        position: 'fixed',
-        bottom: { xs: 24, md: 32 },
-        right: { xs: 24, md: 32 },
-        animation: animation,
-        backgroundColor: '#64ffda',
-        color: '#0a1929',
-        '&:hover': {
-          backgroundColor: 'primary.light',
-        },
-      }}
-    >
-      {IconToShow}
-    </Fab>
+    <Zoom in={trigger}>
+      <Box
+        onClick={handleClick}
+        role="presentation"
+        sx={{
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+          zIndex: 999, // Diğer elementlerin üzerinde görünmesini sağlar
+        }}
+      >
+        <Fab color="primary" size="small" aria-label="scroll back to top">
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </Box>
+    </Zoom>
   );
 }
