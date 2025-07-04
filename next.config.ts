@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export', // Bu satırı ekle veya var olanı bu şekilde değiştir
+  output: 'export',
   images: {
-    unoptimized: true, // GitHub Pages'te Next.js Image optimizasyonu çalışmaz, bu yüzden devre dışı bırakıyoruz.
+    unoptimized: true,
   },
-  // Diğer mevcut ayarlarınız buraya gelecek
+  // GitHub Pages'te alt dizinde yayınlamak için bu ayarları ekliyoruz
+  basePath: '/okanumutacer-portfolio', // Deponun adı neyse buraya onu yazıyoruz
+  assetPrefix: '/okanumutacer-portfolio/', // Statik varlıklar için ön ek
 };
 
 module.exports = nextConfig;
