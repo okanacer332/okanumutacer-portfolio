@@ -1,3 +1,5 @@
+// src/components/SidebarContent.tsx
+
 'use client';
 
 import React from 'react';
@@ -11,7 +13,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 const menuItems = [
   { label: 'Hakkımda', path: '/', icon: <HomeOutlined /> },
   { label: 'Projelerim', path: '/projeler', icon: <Code /> },
-  { label: 'Blog', path: '/blog', icon: <ArticleOutlined /> },
+  // Blog linki buradan kaldırıldı
   { label: 'İletişim', path: '/iletisim', icon: <MailOutline /> },
 ];
 

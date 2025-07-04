@@ -4,7 +4,7 @@
 
 import { Box, Typography, Container, Divider, Card, CardContent, CardActions, Button, Chip, Paper, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import CustomGrid from '@/components/CustomGrid';
+import CustomGrid from '@/components/CustomGrid'; // CustomGrid bileşenini import ettiğinizden emin olun
 import React from 'react';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import CodeIcon from '@mui/icons-material/Code';
@@ -164,7 +164,8 @@ export default function ProjectsPage() {
               }}
             >
                 <Grid container spacing={4}>
-                    <Grid item xs={12} md={7}>
+                    {/* Hata veren Grid item'ları CustomGrid ile değiştirildi */}
+                    <CustomGrid size={{ xs: 12, md: 7 }}>
                         <Typography variant="h4" component="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
                             {featuredProject.title}
                         </Typography>
@@ -186,8 +187,8 @@ export default function ProjectsPage() {
                         </CardActions>
                         <Typography variant="h6" component="h4" sx={{ mb: 1 }}>Teknolojiler</Typography>
                         <TechStack stack={featuredProject.stack} />
-                    </Grid>
-                    <Grid item xs={12} md={5}>
+                    </CustomGrid>
+                    <CustomGrid size={{ xs: 12, md: 5 }}>
                         <Typography variant="h6" component="h4" sx={{ mb: 1 }}>Proje Kapsamı ve Katkılarım</Typography>
                         <List dense>
                             {featuredProject.contributions.map((item, index) => (
@@ -197,7 +198,7 @@ export default function ProjectsPage() {
                                 </ListItem>
                             ))}
                         </List>
-                    </Grid>
+                    </CustomGrid>
                 </Grid>
             </Paper>
         </Box>

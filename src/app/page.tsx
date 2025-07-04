@@ -22,19 +22,19 @@ const SectionTitle = ({ title, number }: { title: string; number: string }) => (
 
 const experiences = [
     {
-    date: 'Nisan 2021 - Nisan 2025',
+    date: '',
     title: 'Yazılım Uzmanı',
-    company: 'Mirsis Bilgi Teknolojileri via AKBANK',
+    company: 'AKBANK',
     description: 'BT Hazine ekibinde, Jenkins CI/CD süreç yönetimi, Oracle SQL ve Karar Destek Sistemleri üzerine RESTful servis geliştirme gibi görevler üstlendim.'
   },
   {
-    date: 'Temmuz 2020 - Nisan 2021',
+    date: '',
     title: 'Bilgisayar Mühendisi',
     company: 'PURPLEBOX, INC.',
     description: 'Artichokee projesinde ReactJS, Node.js ve AWS (S3, Cognito, Lambda) teknolojileriyle tam donanımlı yazılım geliştirme yaptım.'
   },
   {
-    date: 'Ağustos 2019 - Temmuz 2020',
+    date: '',
     title: 'Bilgisayar Mühendisi',
     company: 'ENER OTOMASYON ELEKTRİK',
     description: 'SCADA sistemleri üzerine JavaScript, .NET Core ve C# kullanarak endüstriyel veri toplama çözümleri ve Modbus/MQTT entegrasyonları geliştirdim.'
