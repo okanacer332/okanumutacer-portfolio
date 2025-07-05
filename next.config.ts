@@ -4,9 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // GitHub Pages'te alt dizinde yayınlamak için bu ayarları ekliyoruz
-  basePath: '/okanumutacer-portfolio', // Deponun adı neyse buraya onu yazıyoruz
-  assetPrefix: '/okanumutacer-portfolio/', // Statik varlıklar için ön ek
+  trailingSlash: true, // Bu satırı ekliyoruz
 };
 
 module.exports = nextConfig;
